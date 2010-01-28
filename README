@@ -1,0 +1,55 @@
+This is a mirror of http://www.vim.org/scripts/script.php?script_id=2949
+
+The other day I was sitting around drinking beer and thinking, "Gosh, I hate how long it takes for the list of buffers to show up on the screen when I type :ls. I wish there was a built-in command that quickly opens a window with a list of buffers. Like a :bopen command that works just like the :copen and :lopen commands..." Then it hit me. Yes, the Frisbee hit me right on the melon and I had to get off my lawn chair to throw it back. When I sat back down I had an idea... The buffer list is a perfect use of the location list! Its got file names... even line numbers! Well, I took out the laptop that I was laying on, brushed off the sand and experimented with it. So... How much work did it take to create a location list containing buffers? Precious little it turns out... 
+
+Here's the jist of it... 
+
+" 1. place the output of the ls command into a variable... 
+   redir => out 
+   silent ls 
+   redir END 
+
+" 2. split the string into an array... 
+   let l = split(out, '\n') 
+
+" 3. set the error format to conform to the buffer list format... 
+   set efm=%m\"%f\"%*\\sline\ %l 
+
+" 4. create a location list based on the list of buffers, then open the window... 
+   lgetexpr l 
+   lopen 
+
+Blam! That's it! Now I've got a window that lists buffers, and selecting one of them will take me right to it! Granted, it's raw. But it works and it only took 7 lines of code! 
+
+Then I had another loathsome thought as I was rubbing the bump on my forehead... There are many pretty, feature-rich buffer scripts out there. So what use is this? 
+
+Now, either I had too much to drink or the Frisbee hit me harder that I thought because my darth-vader pug (http://bboylimping.files.wordpress.com/2009/05/darth-vader-dog-costume.jpg) started arguing with me. He said, "Because you are using the built-in location list, vim will take care of buffer selection for you, even window management, and all the location list commands are at your disposal!" 
+
+Hoping that nobody could see me arguing with Darthy I said, "Yea, so what? There are other scripts out there that have a much prettier buffer list, have more features..." 
+
+"Shut up! he said, interrupting me. "It isn't about that. It's about doing as much as you can with as little code as possible." 
+
+Knowing that he was right and humiliated that my dog beat me in an argument, I threw the Frisbee as hard as I could and hoped that he would leave me alone. It didn't work. He just sat there and stared at me with a look that said "you're so immature..." 
+
+"Now, post it!" 
+"Hell no!" I said with a scoff. "Who do you think you are? You're a no-talent-ass-clown pug in a Darth-Vader costume! You're not fooling anyone, you know. Oh, and news flash: you missed the Men in Black auditions by 15 years." 
+
+He just stared at me with a judgmental look on his face. Not wanting to give him the satisfaction, I casually turned over with a yawn so he couldn't see me post the script. 
+
+So, here it is... I've added only a *minimum* collection of useful features to the buflist. I've refined the hell out of it; smoothing out the worst of the rough edges. No feature takes more than a few lines of code, the whole thing is only about 70-75 lines. 
+
+Why have this experiment? Well... there are some important advantages to keeping things short: 
+- There are fewer places for bugs to hide. 
+- The code runs considerably faster because it leverages more of the native C code.
+- It is easier to understand (usually). 
+- It is easier to fix bugs. 
+- A sufficient level of obfuscation adds to job security... and 
+- It saves $0.000000001 in hard-drive space. 
+
+Download it and take a look at it. Play around with it. Adore the elegance of it. Can you think of any other features to add?
+
+Darthy: "Arff! You can do it!" Aww, crap... he caught me. 
+
+Feel free to contact me with ideas and updates (take a look at my profile for the email). 
+
+For those of you who are expecting the world's best buffer script, then give a negative rating... hey lighten up! This is just a fun exercise! Please add a comment before rating! Comments can be posted on the corresponding wiki page (see link at the top of this page).
