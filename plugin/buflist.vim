@@ -90,7 +90,7 @@ function s:setup_window(list)
    " Remove the silly quotation marks
    call map(a:list, 'substitute(v:val, ''"'', "", "g")')
    " Shorten long paths
-   call map(a:list, 'substitute(v:val, ''\S\+\(\S\{25}\)'', ''...\1'', "")')
+   call map(a:list, 'substitute(v:val, ''\S\{4,}\(\S\{25}\)'', ''...\1'', "")')
    " Add a few '|'s to leverage built-in qf highlighting
    call map(a:list, 'substitute(v:val, ''\(.\{9}\)\(.\+\)\sline'', ''\1|\2|line'', "")')
 
