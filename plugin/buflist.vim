@@ -5,27 +5,33 @@
 " Opening a window showing a list of buffers is a lot faster than waiting for
 " the results of an :ls command to finish scrolling across the screen.
 "
-" There really isn't much in terms of usage documentation. Why? For several
-" reasons:
-"  1.) The script is wicked-short. You can probably figure out how to use it
-"      in a New-York second, just by skimming the code.
-"  2.) The script is an experiment in code-development. It is written for
-"      developers, not users, so I assume that you know how to read
-"      vim-script. If you are looking for a large buffer script then look
-"      elsewhere.  My goal here is to see how much can be done with as little
-"      code as possible. Though, there is enough here to make the script useful.
-"  3.) I'm lazy.
+" The script is an experiment in minimal code-development. If you are looking
+" for a large buffer script then look elsewhere. My goal here is to write a
+" complete buffer script with as little code as possible.
 "
 " Why have this experiment? Well... There are some important advantages to keeping
 " things short:
 "  - There are fewer places for bugs to hide.
-"  - The code tends to run faster because there are fewer lines to execute.
-"    Also, leveraging the underlying C code speeds things up dramatically.
+"  - The code runs considerably faster because it leverages more of the native
+"    C code.
 "  - It is easier to understand (usually).
 "  - It is easier to fix bugs.
 "  - A sufficient level of obfuscation adds to job security... and
 "  - It saves $0.000000001 in hard-drive space. Though, this introduction
 "    recovers those savings.
+"
+" Usage:
+"    ,l        Opens a location list window containing the buffer list. The
+"              cursor is placed on the current buffer.  You can change this
+"              mapping by setting "buflist_open" in your vimrc file. E.g:
+"
+"              let buflist_open = "\b"
+"
+" In the buffer list window:
+"  <enter>     Opens the current buffer, and closes the buffer list window.
+"     q        Closes the buffer list window, without making a selection.
+"     d        Deletes the buffer under the cursor. You can delete more than
+"              one buffer at a time by first selecting them in visual mode.
 "
 " For those of you brave vim obfuscators who would like to slay the world's
 " problems with pithy code, focus on:
@@ -46,7 +52,7 @@ function s:wipe() range
    exec "bw" join(map(getline(a:firstline, a:lastline), 'matchstr(v:val, ''\d\+'')'))
    call s:setline(a:firstline, repeat([""], a:lastline-a:firstline+1)) " Clear the entries in the window
 endfunction
-function s:baemer() abort
+function s:bamer() abort
    redir => out | silent ls | redir END
    let buffers = split(out, '\n')
 
@@ -64,12 +70,14 @@ function s:baemer() abort
    call s:setup_window(buffers)
 endfunction
 function s:setup_window(list)
-   call map(a:list, 'substitute(v:val, ''".\{4,}\(.\{25}\)"'', ''|...\1|'', "")')
+   call map(a:list, 'substitute(v:val, ''".\{4,}\(.\{25}\)"'', ''|...\1|'', "")') " shorten long paths
    call map(a:list, 'substitute(v:val, ''"'', "|", "g")') " Remove the silly quotes
    call s:setline(1, a:list)
 
-   au BufLeave <buffer> close | exec s:winrestcmds
-   nnoremap <silent> <buffer> q :do BufLeave<cr>
+   " I like to tuck away the location list window after selecting the buffer I
+   " want.
+   au WinLeave <buffer> close | exec s:winrestcmds
+   nnoremap <silent> <buffer> q :do WinLeave<cr>
     noremap <silent> <buffer> d :call <SID>wipe()<cr>
 endfunction
 function s:setline(lnum, list)
@@ -78,6 +86,7 @@ function s:setline(lnum, list)
    setl nomodifiable nomodified
 endfunction
 
-nmap <unique> <silent> ,l :call <SID>baemer()<CR>
+if !exists("buflist_open") | let buflist_open = ",l" | endif
+exec "nmap <unique> <silent>" buflist_open ":call <SID>bamer()<CR>"
 
 " vim:fdm=marker fmr=function\ ,endfunction
